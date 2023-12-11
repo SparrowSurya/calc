@@ -2,7 +2,6 @@
 This package contains Evaluator class to evaluate an expression
 """
 
-from decimal import Decimal
 from typing import Protocol, Callable, Iterator
 
 from ..lexer import lex
@@ -25,7 +24,7 @@ class _Token(Protocol):
     @property
     def length(self) -> int: ...
 
-_Num = int | float | Decimal
+_Num = int | float
 _Lexer = Callable[[str], Iterator[_Token]]
 _Parser = Callable[[str, _Lexer], Node]
 _Func = dict[str, Callable]
