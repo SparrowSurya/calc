@@ -2,33 +2,13 @@
 This package contains Evaluator class to evaluate an expression
 """
 
-from typing import Protocol, Callable, Iterator
-
 from ..lexer import lex
-from ..lexer.token import TokenType
 from ..parser import parse
 from ..parser.node import Node, BinOp, UnOp, Num, Func, Const
 from .functions import FUNCS
 from .constants import CONSTS
 
-
-class _Token(Protocol):
-    @property
-    def type(self) -> TokenType: ...
-    @property
-    def value(self) -> str: ...
-    @property
-    def index(self) -> int: ...
-    @property
-    def end(self) -> int: ...
-    @property
-    def length(self) -> int: ...
-
-_Num = int | float
-_Lexer = Callable[[str], Iterator[_Token]]
-_Parser = Callable[[str, _Lexer], Node]
-_Func = dict[str, Callable]
-_Const = dict[str, int | float]
+from ..types import _Lexer, _Parser, _Func, _Const, _Num
 
 
 class Evaluator:

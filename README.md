@@ -9,6 +9,8 @@ The project discourage use of any external dependency for calcualtor other than 
 
 **WORK IN PROGRESS**
 
+**NO PROPER TESTING**
+
 ## Features
 * Number: int or float or thier scientific form
 * binary operators: plus, minus, multiply,divide, modulud, power
@@ -22,7 +24,11 @@ The project discourage use of any external dependency for calcualtor other than 
 ```sh
 python main.py
 ```
+OR
+```sh
+python -m calc [-h] [-o {NONE,TOKEN,AST,EVAL,ALL}] [-r ROUND] -e EXPR [EXPR ...]
+```
 
 ## Contributing
-* I will only be watching for issues for errors.
+* I will only be watching for issues for errors or bugs.
 * No PR's
