@@ -26,7 +26,7 @@ python main.py
 ```
 OR
 ```sh
-python -m calc [-h] [-o {NONE,TOKEN,AST,EVAL,ALL}] [-r ROUND] -e EXPR [EXPR ...]
+python -m calc [-h] [-o {NONE,TOKEN,AST,EVAL,ALL}] [-r ROUND] [--raw] -e EXPR [EXPR ...]
 ```
 
 ## Contributing
