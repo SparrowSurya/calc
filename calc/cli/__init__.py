@@ -21,6 +21,7 @@ class Args:
     exprs: Iterable[str]
     raw: bool
     title: bool
+    fmt: str
     inspect_tokens: bool
     inspect_tree: bool
     round: int | None = None
@@ -37,6 +38,7 @@ def get_argparser() -> ArgumentParser:
     p.add_argument('--inspect-tree', action='store_const', const=True, default=False, required=False, help="Inspect parse tree of the expression")
 
     p.add_argument('-r', '--round', type=int, default=None, required=False, help="round output value")
+    p.add_argument('-f', '--format', type=str, default=None, required=False, help="python f-string based format specifier to format number")
 
     p.add_argument('-e', '--expr', '--exprs', required=True, nargs='+', help="input expressions")
 
@@ -50,6 +52,7 @@ def parse_args(arg_parser: ArgumentParser, argv: Iterable[str]) -> Args:
         exprs=args.expr,
         raw=args.raw,
         title=args.no_title,
+        fmt=args.format,
         inspect_tokens=args.inspect_tokens,
         inspect_tree=args.inspect_tree,
         round=args.round,
@@ -63,6 +66,13 @@ def process(expr: str, args: Args):
         tokens = tuple(tok for tok in lex(expr))
         root = parse(expr, lex)
         result = evaluate(expr)
+
+        if args.round:
+            result = round(result, args.round)
+
+        if args.fmt:
+            result = format(result, args.fmt)
+
     except Exception as e:
         print(error_view(type(e).__name__, str(e)))
         return
@@ -76,8 +86,6 @@ def process(expr: str, args: Args):
     if args.inspect_tree:
         print(ast_view(root, raw, title), end='\n\n')
 
-    if args.round:
-        result = round(result, args.round)
     print(eval_view(result, title), end='\n\n')
 
 
