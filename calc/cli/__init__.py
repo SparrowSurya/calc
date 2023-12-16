@@ -5,47 +5,13 @@ output command line arguments for calc.
 
 from argparse import ArgumentParser
 from dataclasses import dataclass
-from enum import IntFlag, auto
 from typing import Iterable
 
 from ..lexer import lex
 from ..parser import parse
 from ..evaluator import evaluate
-from .views import TerminalView
+from .views import token_view, ast_view, eval_view, error_view
 
-
-
-class Output(IntFlag):
-    """Output view of the input.
-
-    Views:
-        * none: no views
-        * token: view tokens
-        * ast: view parsed tree
-        * eval: view the final evaluated result
-        * all: view all of above
-    """
-
-    NONE  = 0
-    TOKEN = auto()
-    AST   = auto()
-    EVAL  = auto()
-    ALL   = TOKEN | AST | EVAL
-
-    @classmethod
-    def from_names(cls, *flag_names: str):
-        """returns View object based on the flag names"""
-        flag_value = 0
-        for flag_name in flag_names:
-            try:
-                flag_value |= cls[flag_name.upper()]
-            except KeyError:
-                raise ValueError(f"Invalid view flag name: {flag_name}, choices: {cls.choices()}")
-        return cls(flag_value)
-
-    @staticmethod
-    def choices() -> tuple[str]:
-        return tuple(Output.__members__.keys())
 
 
 @dataclass(frozen=True)
@@ -54,56 +20,65 @@ class Args:
 
     exprs: Iterable[str]
     raw: bool
-    output: Output = Output.EVAL
+    title: bool
+    inspect_tokens: bool
+    inspect_tree: bool
     round: int | None = None
 
 
 def get_argparser() -> ArgumentParser:
     """returns th aprser object to parse args"""
-    p = ArgumentParser('Calc')
+    p = ArgumentParser('calc')
 
-    p.add_argument('-o', '--output', choices=Output.choices(), default='EVAL', required=False, help="ouptut view")
+    p.add_argument('--no-title', action='store_const', const=False, default=True, required=False, help="Show title for given output")
+    p.add_argument('--raw', action='store_const', const=True, default=False, help="View output without formatting")
+
+    p.add_argument('--inspect-tokens', action='store_const', const=True, default=False, required=False, help="Inspect tokens of the expression")
+    p.add_argument('--inspect-tree', action='store_const', const=True, default=False, required=False, help="Inspect parse tree of the expression")
+
     p.add_argument('-r', '--round', type=int, default=None, required=False, help="round output value")
-    p.add_argument('--raw', action="store_const", const=True, default=False, help="View output without formatting")
-    p.add_argument('-e', '--expr', '--exprs', required=True, nargs='+', help="expressions")
+
+    p.add_argument('-e', '--expr', '--exprs', required=True, nargs='+', help="input expressions")
 
     return p
 
 
 def parse_args(arg_parser: ArgumentParser, argv: Iterable[str]) -> Args:
-    """retursn parsed args in a data structure"""
+    """returns parsed data"""
     args = arg_parser.parse_args(argv)
     return Args(
         exprs=args.expr,
         raw=args.raw,
-        output=Output.from_names(args.output),
+        title=args.no_title,
+        inspect_tokens=args.inspect_tokens,
+        inspect_tree=args.inspect_tree,
         round=args.round,
     )
 
 
-# TODO - error handelling
 def process(expr: str, args: Args):
     """Processes one expression at a time"""
-    if (output := args.output) == Output.NONE:
+
+    try:
+        tokens = tuple(tok for tok in lex(expr))
+        root = parse(expr, lex)
+        result = evaluate(expr)
+    except Exception as e:
+        print(error_view(type(e).__name__, str(e)))
         return
 
-    tokens = tuple(tok for tok in lex(expr))
-    root = parse(expr, lex)
-    result = evaluate(expr)
-    viewer = TerminalView()
+    raw = args.raw
+    title = expr if args.title else None
 
-    print('', viewer.expr_view(expr), sep='\n', end='\n\n')
+    if args.inspect_tokens:
+        print(token_view(tokens, raw, title), end='\n\n')
 
-    if output & Output.TOKEN or output == Output.ALL:
-        print("Tokens:", viewer.token_view(tokens, args.raw), sep='\n')
+    if args.inspect_tree:
+        print(ast_view(root, raw, title), end='\n\n')
 
-    if output & Output.AST or output == Output.ALL:
-        print("AST:", viewer.ast_view(root, args.raw), end='\n\n')
-
-    if output & Output.EVAL or output == Output.ALL:
-        if args.round:
-            result = round(result, args.round)
-        print("Eval:", viewer.eval_view(expr, result))
+    if args.round:
+        result = round(result, args.round)
+    print(eval_view(result, title), end='\n\n')
 
 
 def main(argv):

@@ -4,8 +4,9 @@
 </div>
 
 This project aims to make a simple calculator app.
-It also aims to make it better and better with no complexity.
-The project discourage use of any external dependency for calcualtor other than maintenance ones.
+It also aims to make it better with no complexity.
+The project discourage use of any external dependency (mostly).
+External tools for maintenance are acceptable.
 
 **WORK IN PROGRESS**
 
@@ -26,7 +27,7 @@ python main.py
 ```
 OR
 ```sh
-python -m calc [-h] [-o {NONE,TOKEN,AST,EVAL,ALL}] [-r ROUND] [--raw] -e EXPR [EXPR ...]
+python -m calc [-h] [--no-title] [--raw] [--inspect-tokens] [--inspect-tree] [-r ROUND] -e EXPR [EXPR ...]
 ```
 
 ## Contributing
