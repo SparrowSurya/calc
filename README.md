@@ -22,12 +22,14 @@ External tools for maintenance are acceptable.
 * functions can have fixed, optional or any no of args
 
 ## Run
+Run the program:
 ```sh
 python main.py
 ```
-OR
+
+Use it as cli application:
 ```sh
-python -m calc [-h] [--no-title] [--raw] [--inspect-tokens] [--inspect-tree] [-r ROUND] -e EXPR [EXPR ...]
+python -m calc -h
 ```
 
 ## Contributing
