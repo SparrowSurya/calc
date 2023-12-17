@@ -22,6 +22,7 @@ class Args:
     raw: bool
     title: bool
     fmt: str
+    show_eval: bool
     inspect_tokens: bool
     inspect_tree: bool
     round: int | None = None
@@ -31,6 +32,7 @@ def get_argparser() -> ArgumentParser:
     """returns th aprser object to parse args"""
     p = ArgumentParser('calc')
 
+    p.add_argument('--no-eval', action='store_const', const=False, default=True, required=False, help="output the value calculated")
     p.add_argument('--no-title', action='store_const', const=False, default=True, required=False, help="Show title for given output")
     p.add_argument('--raw', action='store_const', const=True, default=False, help="View output without formatting")
 
@@ -53,6 +55,7 @@ def parse_args(arg_parser: ArgumentParser, argv: Iterable[str]) -> Args:
         raw=args.raw,
         title=args.no_title,
         fmt=args.format,
+        show_eval=args.no_eval,
         inspect_tokens=args.inspect_tokens,
         inspect_tree=args.inspect_tree,
         round=args.round,
@@ -86,7 +89,8 @@ def process(expr: str, args: Args):
     if args.inspect_tree:
         print(ast_view(root, raw, title), end='\n\n')
 
-    print(eval_view(result, title), end='\n\n')
+    if args.show_eval:
+        print(eval_view(result, title), end='\n\n')
 
 
 def main(argv):
