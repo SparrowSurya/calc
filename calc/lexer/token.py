@@ -48,4 +48,4 @@ class Token:
         return self.index + self.length
 
     def __repr__(self) -> str:
-        return f"Token({self.type!s}, {self.value}, {self.index}:{self.end})"
+        return f"Token({self.type.upper()!s}, {self.value}, {self.index}:{self.end})"
