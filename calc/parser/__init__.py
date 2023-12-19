@@ -42,11 +42,11 @@ class Parser:
         """parses an expression"""
         node = self.parse_term()
 
-        while self.token and self.token.value in '+-':
+        while self.token and self.token.type in (TokenType.PLUS, TokenType.MINUS):
             op = self.token.value
-            if self.token.value == '+':
+            if self.token.type == TokenType.PLUS:
                 self.advance()
-            elif self.token.value == '-':
+            elif self.token.type == TokenType.MINUS:
                 self.advance()
             else:
                 raise self.missing_symbol_error()
@@ -59,7 +59,7 @@ class Parser:
         """parses expressions seperated by comma delimiter"""
         nodes = [self.parse_expr()]
 
-        while self.token and self.token.value == ',':
+        while self.token and self.token.type == TokenType.COMMA:
             self.advance()
             nodes.extend(self.parse_exprs())
 
@@ -69,15 +69,16 @@ class Parser:
         """parses terms"""
         node = self.parse_factor()
 
-        while self.token and self.token.value in ('*', '/', '%', '**'):
+        types = (TokenType.MUL, TokenType.DIV, TokenType.MOD, TokenType.POW)
+        while self.token and self.token.type in types:
             op = self.token.value
-            if self.token.value == '*':
+            if self.token.type == TokenType.MUL:
                 self.advance()
-            elif self.token.value == '/':
+            elif self.token.type == TokenType.DIV:
                 self.advance()
-            elif self.token.value == '%':
+            elif self.token.type == TokenType.MOD:
                 self.advance()
-            elif self.token.value == '**':
+            elif self.token.type == TokenType.POW:
                 self.advance()
             else:
                 raise self.missing_symbol_error()
@@ -96,13 +97,13 @@ class Parser:
             self.advance()
             return Num(num)
 
-        if self.token.value == '(':
+        if self.token.type == TokenType.LPAREN:
             self.advance()
             node = self.parse_expr()
             self.advance()
             return node
 
-        if self.token.value in '+-':
+        if self.token.type in (TokenType.PLUS, TokenType.MINUS):
             op = self.token.value
             self.advance()
             return UnOp(op, self.parse_factor())
@@ -111,7 +112,7 @@ class Parser:
             name = self.token.value
             self.advance()
 
-            if self.token and self.token.value == '(':
+            if self.token and self.token.type == TokenType.LPAREN:
                 self.advance()
                 node = Func(name, tuple(self.parse_exprs()))
                 self.advance()
