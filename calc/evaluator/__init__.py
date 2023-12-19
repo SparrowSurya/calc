@@ -11,6 +11,8 @@ from .constants import CONSTS
 from ..types import _Lexer, _Parser, _Func, _Const, _Num
 
 
+# TODO - throw errors
+
 class Evaluator:
     """Evaluator class to evaluate expression"""
 

@@ -2,18 +2,18 @@
 This module contains Exception classes raised during lexing.
 """
 
+from ..exceptions import LexicalError
 
-class IllegalCharacterError(Exception):
+class IllegalCharError(LexicalError):
     """Character does not matched any atomic lexer"""
 
-    def __init__(self, expr: str, pos: int):
-        self.expr = expr
+    def __init__(self, expr: str, pos: int, *msg: object):
+        super().__init__(expr, *msg)
         self.pos = pos
 
     def __str__(self) -> str:
-        pos = self.pos+1
-        return '\n'.join([
-            f"Illegal character '{self.expr[self.pos]}' found at {self.pos}",
-            f"{self.expr}",
-            f"{'^':>{pos}}",
-        ])
+        return (
+            f"{self.name}: {self.description} \n"
+            f"Expression: '{self.expr}' \n"
+            f"{'^':>{self.pos+14}}"
+        )

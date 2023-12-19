@@ -2,11 +2,11 @@
 This package contains Parser class for parsing stream of tokens to ast.
 """
 
-from typing import Callable, Iterator
 
 from .node import BinOp, UnOp, Num, Func, Const
-from .exceptions import InvalidTokenError, MissingSymbolError, UnexpectedEndOfInputError
+from .exceptions import UnknownTokenError, SyntaxError
 from ..lexer.token import TokenType, Token
+from ..types import _Lexer
 
 # TODO - currently some errors aren't providing much of information and there might be
 # clash between InvalidTokenError and MissingSymbolError that which one should be used
@@ -14,7 +14,6 @@ from ..lexer.token import TokenType, Token
 
 # TODO - tested only for few correct expressions manually
 
-_Lexer = Callable[[str], Iterator[Token]]
 
 class Parser:
     """Parser object to convert stream of tokens to ast"""
@@ -49,7 +48,7 @@ class Parser:
             elif self.token.type == TokenType.MINUS:
                 self.advance()
             else:
-                raise self.missing_symbol_error()
+                raise self.syntax_error()
 
             node = BinOp(left=node, op=op, right= self.parse_term())
 
@@ -81,7 +80,7 @@ class Parser:
             elif self.token.type == TokenType.POW:
                 self.advance()
             else:
-                raise self.missing_symbol_error()
+                raise self.syntax_error()
 
             node = BinOp(left=node, op=op, right=self.parse_factor())
 
@@ -90,7 +89,7 @@ class Parser:
     def parse_factor(self) -> Num | UnOp | Func | Const:
         """"parses factors"""
         if self.token is None:
-            raise self.unexpected_end_of_input_error()
+            raise self.syntax_error("unexpected end of expression")
 
         if self.token.type is TokenType.NUMBER:
             num = self.token.value
@@ -120,25 +119,22 @@ class Parser:
             else:
                 return Const(name)
 
-        raise self.invalid_token_error()
+        raise self.unknown_token_error()
 
-    def missing_symbol_error(self) -> MissingSymbolError:
-        return MissingSymbolError(
-            self.expr,
-            "You propbably need to recheck the input",
-            self.token.index,
-        )
-
-    def invalid_token_error(self) -> InvalidTokenError:
-        return InvalidTokenError(
+    def syntax_error(self, *msg: object) -> SyntaxError:
+        """returns syntax error object"""
+        return SyntaxError(
             self.expr,
             self.token,
+            *msg,
         )
 
-    def unexpected_end_of_input_error(self) -> UnexpectedEndOfInputError:
-        return UnexpectedEndOfInputError(
+    def unknown_token_error(self) -> UnknownTokenError:
+        """returns unknown token error object"""
+        return UnknownTokenError(
             self.expr,
-            "expected complete expression",
+            self.token,
+            f"unknown token {self.token!r} encountered during parsing"
         )
 
 

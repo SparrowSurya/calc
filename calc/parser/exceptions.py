@@ -3,50 +3,49 @@ This module contains exception classes raised during parsing
 """
 
 from ..lexer.token import Token
+from ..exceptions import ParsingError
 
 
-class InvalidTokenError(Exception):
-    """Raised when there is a new token in lexer but parser dont supports it yet"""
+class UnknownTokenError(ParsingError):
+    """Raised when encounters unsupported token"""
 
-    def __init__(self, expr: str, token: Token):
-        self.expr = expr
+    def __init__(self, expr: str, token: Token, *args: object):
+        super().__init__(expr, *args)
         self.token = token
 
     def __str__(self) -> str:
         marker = '^'*self.token.length
-        return '\n'.join([
-            f"Invalid Token: <{self.token}> encountered during parsing",
-            self.expr,
+        return (
+            f"{self.name}: {self.description} \n",
+            f"{self.expr} \n",
             f"{marker:>{self.token.index}}"
-        ])
+        )
 
 
-class MissingSymbolError(Exception):
-    """Raised when a symbol (probably an operator) is missing"""
+class SyntaxError(ParsingError):
+    """Raised during wrong syntax"""
 
-    def __init__(self, expr: str, symbol: str, pos: int):
-        self.expr = expr
-        self.symbol = symbol
-        self.pow = pos
+    def __init__(self, expr: str, token: Token, *args: object):
+        super().__init__(expr, *args)
+        self.token = token
 
     def __str__(self) -> str:
-        return '\n'.join([
-            f"Missing Symbol: {self.symbol} expected at {self.pos}",
-            self.expr,
-            f"{'^':>{self.pos}}",
-        ])
+        return (
+            f"{self.name}: {self.description} \n"
+            f"Expression: {self.expr} \n"
+            f"{'^':>{self.pos+14}}",
+        )
 
-
-class UnexpectedEndOfInputError(Exception):
+class UnexpectedEndOfInputError(ParsingError):
     """Raised when given incomplete expression"""
 
-    def __init__(self, expr: str, expected: str):
+    def __init__(self, expr: str, expected: str, *args: object):
+        super().__init__(*args)
         self.expr = expr
         self.expected = expected
 
     def __str__(self) -> str:
         return 'n'.join([
             f"Unexpected End of Input: {self.expected}",
-            f"Expr: {self.expr}",
+            f"{self.expr}",
         ])
-
