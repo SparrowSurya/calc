@@ -2,7 +2,12 @@
 This module contains Exception classes raised during lexing.
 """
 
-from ..exceptions import LexicalError
+from ..exceptions import CalcError
+
+
+class LexicalError(CalcError):
+    """Raised for errors during tokenization."""
+
 
 class IllegalCharError(LexicalError):
     """Character does not matched any atomic lexer"""

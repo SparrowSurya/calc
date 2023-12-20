@@ -3,7 +3,11 @@ This module contains exception classes raised during parsing
 """
 
 from ..lexer.token import Token
-from ..exceptions import ParsingError
+from ..exceptions import CalcError
+
+
+class ParsingError(CalcError):
+    """Raised for errors during parsing."""
 
 
 class UnknownTokenError(ParsingError):

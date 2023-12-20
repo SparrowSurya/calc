@@ -21,18 +21,3 @@ class CalcError(Exception):
     def __str__(self) -> str:
         return f"{self.name}: {self.description}"
 
-
-class LexicalError(CalcError):
-    """Raised for errors during tokenization."""
-
-
-class ParsingError(CalcError):
-    """Raised for errors during parsing."""
-
-
-class EvaluationError(CalcError):
-    """Raised for errors during expression evaluation."""
-
-
-class InternalError(CalcError):
-    """Raised for unexpected errors or bugs."""
