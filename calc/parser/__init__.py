@@ -5,14 +5,10 @@ This package contains Parser class for parsing stream of tokens to ast.
 
 from .node import BinOp, UnOp, Num, Func, Const
 from .exceptions import UnknownTokenError, SyntaxError
+from ..lexer import lex
 from ..lexer.token import TokenType, Token
 from ..types import _Lexer
 
-# TODO - currently some errors aren't providing much of information and there might be
-# clash between InvalidTokenError and MissingSymbolError that which one should be used
-# or to be renamed properly. Unexpected enf of input also needs to be improved
-
-# TODO - tested only for few correct expressions manually
 
 
 class Parser:
@@ -138,6 +134,6 @@ class Parser:
         )
 
 
-def parse(expr: str, lexer: _Lexer) -> Num | UnOp | Func | BinOp | Const:
+def parse(expr: str, lexer: _Lexer = lex) -> Num | UnOp | Func | BinOp | Const:
     """returns ast of expr"""
     return Parser(expr, lexer).parse()

@@ -3,7 +3,7 @@ This package contains Lexer class for lexing various tokens in expression.
 """
 
 from __future__ import annotations
-from typing import Iterator
+from typing import Iterable, Iterator
 
 from .token import Token
 from .atomic_lexer import AtomicLexer
@@ -65,7 +65,7 @@ class Lexer:
     __next__ = next_token
 
 
-def lex(expr: str, ignore_chars: str = ' \t\n\r') -> Iterator[Token]:
+def lex(expr: str, ignore_chars: str = ' \t\n\r', atomic_lexers: Iterable[AtomicLexer] = lexers) -> Iterator[Token]:
     """returns iterator of tokens"""
     return iter(
         Lexer(expr=expr, ignore_chars=ignore_chars, atomic_lexers=lexers)

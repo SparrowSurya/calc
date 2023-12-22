@@ -2,12 +2,12 @@
 This package contains Evaluator class to evaluate an expression
 """
 
-from ..lexer import lex
-from ..parser import parse
-from ..parser.node import Node, BinOp, UnOp, Num, Func, Const
 from .functions import FUNCS
 from .constants import CONSTS
 
+from ..lexer import lex
+from ..parser import parse
+from ..parser.node import Node, BinOp, UnOp, Num, Func, Const
 from ..types import _Lexer, _Parser, _Func, _Const, _Num
 
 
@@ -16,15 +16,16 @@ from ..types import _Lexer, _Parser, _Func, _Const, _Num
 class Evaluator:
     """Evaluator class to evaluate expression"""
 
-    def __init__(self, lexer: _Lexer, parser: _Parser, funcs: _Func, consts: _Const):
+    def __init__(self, expr: str, lexer: _Lexer = lex, parser: _Parser = parse, funcs: _Func = FUNCS, consts: _Const = CONSTS):
+        self.expr = expr
         self.lexer = lexer
         self.parser = parser
         self.funcs = funcs
         self.consts = consts
 
-    def eval(self, expr: str) -> _Num:
+    def eval(self) -> _Num:
         """main eval function"""
-        root = self.parser(expr, self.lexer)
+        root = self.parser(self.expr, self.lexer)
         return self._eval_node(root)
 
     def _eval_node(self, root: Node) -> _Num:
@@ -85,9 +86,13 @@ class Evaluator:
         return self.consts[root.name.lower()]
 
 
-# evaluator object with default values
-_evaluator = Evaluator(lex, parse, FUNCS, CONSTS)
 
-def evaluate(expr: str) -> _Num:
+def evaluate(
+        expr: str,
+        lexer: _Lexer = lex,
+        parser: _Parser = parse,
+        funcs: _Func = FUNCS,
+        consts: _Const = CONSTS,
+    ) -> _Num:
     """returns a value for given expression"""
-    return _evaluator.eval(expr)
+    return Evaluator(expr, lexer, parser, funcs, consts).eval()
