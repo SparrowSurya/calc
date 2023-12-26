@@ -31,7 +31,7 @@ class Parser:
         """main parse function"""
         if self.token:
             return self.parse_expr()
-        return Num('0')
+        return Num(0, '0')
 
     def parse_expr(self) -> BinOp | UnOp | Num | Func | Const:
         """parses an expression"""
@@ -39,6 +39,7 @@ class Parser:
 
         while self.token and self.token.type in (TokenType.PLUS, TokenType.MINUS):
             op = self.token.value
+            index = self.token.index
             if self.token.type == TokenType.PLUS:
                 self.advance()
             elif self.token.type == TokenType.MINUS:
@@ -46,7 +47,7 @@ class Parser:
             else:
                 raise self.syntax_error()
 
-            node = BinOp(left=node, op=op, right= self.parse_term())
+            node = BinOp(index, left=node, op=op, right= self.parse_term())
 
         return node
 
@@ -67,6 +68,7 @@ class Parser:
         types = (TokenType.MUL, TokenType.DIV, TokenType.MOD, TokenType.POW)
         while self.token and self.token.type in types:
             op = self.token.value
+            index = self.token.index
             if self.token.type == TokenType.MUL:
                 self.advance()
             elif self.token.type == TokenType.DIV:
@@ -78,7 +80,7 @@ class Parser:
             else:
                 raise self.syntax_error()
 
-            node = BinOp(left=node, op=op, right=self.parse_factor())
+            node = BinOp(index, left=node, op=op, right=self.parse_factor())
 
         return node
 
@@ -89,8 +91,9 @@ class Parser:
 
         if self.token.type is TokenType.NUMBER:
             num = self.token.value
+            index = self.token.index
             self.advance()
-            return Num(num)
+            return Num(index, num)
 
         if self.token.type == TokenType.LPAREN:
             self.advance()
@@ -100,20 +103,22 @@ class Parser:
 
         if self.token.type in (TokenType.PLUS, TokenType.MINUS):
             op = self.token.value
+            index = self.token.index
             self.advance()
-            return UnOp(op, self.parse_factor())
+            return UnOp(index, op, self.parse_factor())
 
         if self.token.type == TokenType.NAME:
             name = self.token.value
+            index = self.token.index
             self.advance()
 
             if self.token and self.token.type == TokenType.LPAREN:
                 self.advance()
-                node = Func(name, tuple(self.parse_exprs()))
+                node = Func(index, name, tuple(self.parse_exprs()))
                 self.advance()
                 return node
             else:
-                return Const(name)
+                return Const(index, name)
 
         raise self.unknown_token_error()
 

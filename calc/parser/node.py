@@ -1,5 +1,5 @@
 """
-This module contains various nodes for ast
+This module contains nodes for parse tree
 """
 
 from __future__ import annotations
@@ -7,7 +7,10 @@ import abc
 
 
 class Node(abc.ABC):
-    """Abstract base class for node in ast"""
+    """Abstract base class for parse tree node"""
+
+    def __init__(self, index: int):
+        self.index = index
 
     def from_dict(cls, obj: dict[str, Node]) -> Node:
         return cls(**obj)
@@ -20,7 +23,8 @@ class Node(abc.ABC):
 class BinOp(Node):
     """Node for a binary operator"""
 
-    def __init__(self, left: Node, op: str, right: Node):
+    def __init__(self, index: str, left: Node, op: str, right: Node):
+        super().__init__(index)
         self.left = left
         self.op = op
         self.right = right
@@ -40,7 +44,8 @@ class Num(Node):
     """Node for a literal number (can be int or float or
     in scientific notation)"""
 
-    def __init__(self, value: int | float):
+    def __init__(self, index: str, value: int | float):
+        super().__init__(index)
         self.value = value
 
     def __repr__(self) -> str:
@@ -53,7 +58,8 @@ class Num(Node):
 class UnOp(Node):
     """Node for unary operator"""
 
-    def __init__(self, op: str, expr: Node):
+    def __init__(self, index: str, op: str, expr: Node):
+        super().__init__(index)
         self.op = op
         self.expr = expr
 
@@ -71,7 +77,8 @@ class Func(Node):
     """Node for function object which takes in some input
     and returns a value"""
 
-    def __init__(self, name: str, args: tuple[Node]):
+    def __init__(self, index: str, name: str, args: tuple[Node]):
+        super().__init__(index)
         self.name = name
         self.args = args
 
@@ -89,7 +96,8 @@ class Func(Node):
 class Const(Node):
     """Node for a constant value represented by a name"""
 
-    def __init__(self, name: str):
+    def __init__(self, index: str, name: str):
+        super().__init__(index)
         self.name = name
 
     def __repr__(self) -> str:
