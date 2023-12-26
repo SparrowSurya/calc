@@ -2,10 +2,11 @@
 This module contains the definitions for some objects
 """
 from __future__ import annotations
-from typing import Protocol, Callable, Iterator, Iterable
+from typing import Protocol, Callable, Iterator, Iterable, TYPE_CHECKING
 
-from .lexer.token import TokenType
-from .parser.node import Node
+if TYPE_CHECKING:
+    from .lexer.token import TokenType
+    from .parser.node import Node
 
 
 class _Token(Protocol):
@@ -35,7 +36,7 @@ class _Node(Protocol):
     def from_dict(cls, *args) -> _Node: ...
     def to_dict(self) -> dict: ...
 
-_Parser = Callable[[str, _Lexer], Node]
+_Parser = Callable[[str, _Lexer], _Node]
 _Num = int | float
 _Func = dict[str, Callable]
 _Const = dict[str, int | float]

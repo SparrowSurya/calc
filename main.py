@@ -7,7 +7,7 @@ from calc.evaluator import evaluate
 PROMPT = '\033[32m\033[0m '
 
 def main():
-    print("Use 'CTRL+Z' to exit!", end='\n\n')
+    print("Enter 'CTRL+Z' to exit!", end='\n\n')
     while True:
         try:
             print(evaluate(input(PROMPT).strip()))
