@@ -1,13 +1,16 @@
 <div align="center">
-    <h1>Calculator</h1>
+    <a href="https://github.com/SparrowSurya/calc">
+        <h1>Calculator</h1>
+    </a>
     <i>made in python</i>
 </div>
 
-
+<br />
 <div align="center">
     <img src="https://img.shields.io/badge/status-WIP-yellow" />
     <img src="https://img.shields.io/badge/tests-Pending-yellow" />
 </div>
+<br />
 
 
 This project aims to make a simple calculator app.
@@ -22,7 +25,7 @@ External tools for maintenance are acceptable.
 * unary operators: `+ (positive)`, `- (negative)`
 * operator precedence (supports `BODMAS`)
 * brackets allowed `(` and `)`
-* supports functions and constants.
+* supports (functions)[./calc/evaluator/functions.py] and (constants)[./calc/evaluator/constants.py].
 * functions can have fixed, optional or atleast one args
 * decent GUI interface
 
@@ -47,3 +50,12 @@ python main.py
 ## Contributing
 * only be watching for errors or bugs issues.
 * No PR's
+
+
+## Demo
+
+<div>
+    <img src="./demo/demo1.png" />
+    <br />
+    <img src="./demo/demo2.png" />
+</div>
