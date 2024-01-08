@@ -3,35 +3,47 @@
     <i>made in python</i>
 </div>
 
+
+<div align="center">
+    <img src="https://img.shields.io/badge/status-WIP-yellow" />
+    <img src="https://img.shields.io/badge/tests-Pending-yellow" />
+</div>
+
+
 This project aims to make a simple calculator app.
-It also aims to make it better with no complexity.
+It also aims to make it better with simplicity.
 The project discourage use of any external dependency (mostly).
 External tools for maintenance are acceptable.
 
-**WORK IN PROGRESS**
-
-**NO PROPER TESTING**
 
 ## Features
-* Number: int or float or thier scientific form
-* binary operators: plus, minus, multiply,divide, modulud, power
-* unary operators: positive, negative
-* operator precedence
-* brackets allowed
-* supports functions and constants
-* functions can have fixed, optional or any no of args
+* Number: int or float or their scientific form
+* binary operators: `+ (plus)`, `- (minus)`, `* (multiply)`, `/ (divide)`, `% (modulus)`, `** (power)`
+* unary operators: `+ (positive)`, `- (negative)`
+* operator precedence (supports `BODMAS`)
+* brackets allowed `(` and `)`
+* supports functions and constants.
+* functions can have fixed, optional or atleast one args
+* decent GUI interface
 
-## Run
-Run the program:
+
+## Run the program
+Running GUI application:
 ```sh
-python main.py
+python -m calc.app
 ```
 
-Use it as cli application:
+Running as CLI application (see help):
 ```sh
 python -m calc -h
 ```
 
+Running the program:
+```sh
+python main.py
+```
+
+
 ## Contributing
-* I will only be watching for issues for errors or bugs.
+* only be watching for errors or bugs issues.
 * No PR's

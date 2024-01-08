@@ -1,6 +1,7 @@
 """
 This module contains the definitions for some objects
 """
+
 from __future__ import annotations
 from typing import Protocol, Callable, Iterator, Iterable, TYPE_CHECKING
 
