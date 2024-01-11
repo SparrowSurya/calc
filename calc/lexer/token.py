@@ -2,10 +2,6 @@
 Module: calc.lexer.token
 Description: provides classes for representing tokens in expression.
 
-objects:
-- TokenType: different types of tokens in expression
-- Token: single token representation
-
 Usage:
 >>> from calc.lexer.token import TokenType, Token
 >>> t = Token(TokenType.NUMBER, '23.6', 6)
