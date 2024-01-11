@@ -1,23 +1,36 @@
 """
-This package contains Evaluator class to evaluate an expression
+Module: calc.evaluator
+Description: Providesthe classand functions to evaluate the parse tree.
 """
 
-from .functions import FUNCS
-from .constants import CONSTS
+from .functions import default_funcs
+from .constants import default_consts
 from .exceptions import *
-
 from ..lexer import lex
 from ..parser import parse
 from ..parser.node import Node, BinOp, UnOp, Num, Func, Const
 from ..types import _Lexer, _Parser, _Func, _Const, _Num
 
 
-# TODO - throw errors
-
 class Evaluator:
-    """Evaluator class to evaluate expression"""
+    """A class to evaluate the expression."""
 
-    def __init__(self, expr: str, lexer: _Lexer = lex, parser: _Parser = parse, funcs: _Func = FUNCS, consts: _Const = CONSTS):
+    def __init__(
+        self,
+        expr: str,
+        lexer: _Lexer = lex,
+        parser: _Parser = parse,
+        funcs: _Func = default_funcs,
+        consts: _Const = default_consts,
+    ):
+        """
+        Arguments:
+        - expr: expression.
+        - lexer: function to tokenise the expression.
+        - parser: parses the stream of token into parse tree.
+        - funcs: functions.
+        - consts: constants.
+        """
         self.expr = expr
         self.lexer = lexer
         self.parser = parser
@@ -25,104 +38,119 @@ class Evaluator:
         self.consts = consts
 
     def eval(self) -> _Num:
-        """main eval function"""
+        """Main method to evaluate the expreesion."""
         root = self.parser(self.expr, self.lexer)
         return self._eval_node(root)
 
     def _eval_node(self, root: Node) -> _Num:
-        """evaluates a node in ast"""
+        """Evaluates arbitrary node. Finds the appropriate method for the node."""
         try:
             name = f"_eval_{type(root).__name__.lower()}"
             method = getattr(self, name)
         except AttributeError:
-            raise MethodNotFoundError(self.expr, name, root, 'method not found for node evaluation')
+            raise MethodNotFoundError(
+                self.expr, name, root, "method not found for node evaluation"
+            )
         return method(root)
 
     def _eval_binop(self, root: BinOp) -> _Num:
-        """evaluates binary operator node"""
+        """Evaluates the BinOp node."""
         left = self._eval_node(root.left)
         right = self._eval_node(root.right)
 
-        if root.op == '+':
+        if root.op == "+":
             return left + right
 
-        if root.op == '-':
+        if root.op == "-":
             return left - right
 
-        if root.op == '*':
+        if root.op == "*":
             return left * right
 
-        if root.op == '/':
+        if root.op == "/":
             try:
                 return left / right
             except ZeroDivisionError:
-                raise DivideByZeroError(self.expr, root.index, 'cannot divide by zero')
+                raise DivideByZeroError(self.expr, root.index, "cannot divide by zero")
 
-        if root.op == '%':
+        if root.op == "%":
             try:
                 return left % right
             except ZeroDivisionError:
-                raise DivideByZeroError(self.expr, root.index, 'cannot modulo by zero')
+                raise DivideByZeroError(self.expr, root.index, "cannot modulo by zero")
 
-        if root.op == '**':
-            return left ** right
+        if root.op == "**":
+            return left**right
 
     def _eval_unop(self, root: UnOp) -> _Num:
-        """Evaluates unary operator node"""
+        """Evaluates UnOp node."""
         expr = self._eval_node(root.expr)
 
-        if root.op == '+':
+        if root.op == "+":
             return +expr
-        if root.op == '-':
+        if root.op == "-":
             return -expr
 
     def _eval_num(self, root: Num) -> _Num:
-        """Evaluates number node"""
+        """Evaluates Num node."""
         try:
             return int(root.value)
         except ValueError:
             pass
 
         base, expo = root.value, 0
-        if 'e' in base:
-            base, expo = base.split('e')
+        if "e" in base:
+            base, expo = base.split("e")
 
-        base = float(base) if '.' in base else int(base)
+        base = float(base) if "." in base else int(base)
         return base * (10 ** int(expo))
 
     def _eval_func(self, root: Func) -> _Num:
-        """Evaluates function node"""
+        """Evaluates Func node."""
         try:
             name = root.name.lower()
             fn = self.funcs[name]
         except KeyError:
-            raise UnknownFuncNameError(self.expr, name, root.index, 'function name not found')
+            raise UnknownFuncNameError(
+                self.expr, name, root.index, "function name not found"
+            )
 
         try:
             args = tuple(self._eval_node(arg) for arg in root.args)
             return fn(*args)
         except ValueError:
-            raise MathDomainError(self.expr, name, root.index, 'value out of domain')
+            raise MathDomainError(self.expr, name, root.index, "value out of domain")
         except TypeError:
-            raise WrongArgCountError(self.expr, name, root.index, 'wrong number of arguments provided')
-
+            raise WrongArgCountError(
+                self.expr, name, root.index, "wrong number of arguments provided"
+            )
 
     def _eval_const(self, root: Const) -> _Num:
-        """Evaluates constant node"""
+        """Evaluates Const node."""
         try:
             name = root.name.lower()
             return self.consts[name]
         except KeyError:
-            raise UnknownConstNameError(self.expr, name, root.index, 'const name not found')
-
+            raise UnknownConstNameError(
+                self.expr, name, root.index, "const name not found"
+            )
 
 
 def evaluate(
-        expr: str,
-        lexer: _Lexer = lex,
-        parser: _Parser = parse,
-        funcs: _Func = FUNCS,
-        consts: _Const = CONSTS,
-    ) -> _Num:
-    """returns a value for given expression"""
+    expr: str,
+    lexer: _Lexer = lex,
+    parser: _Parser = parse,
+    funcs: _Func = default_funcs,
+    consts: _Const = default_consts,
+) -> _Num:
+    """
+    Evaluates the expreesion into and outputs the result.
+
+    Arguments:
+    - expr: expression.
+    - lexer: function to tokenise the expression.
+    - parser: parses the stream of token into parse tree.
+    - funcs: functions.
+    - consts: constants.
+    """
     return Evaluator(expr, lexer, parser, funcs, consts).eval()

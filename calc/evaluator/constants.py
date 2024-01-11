@@ -1,11 +1,15 @@
 """
-This module contains constants
+Module: calc.evaluator.constants
+Description: Provides the constant values.
 """
 
 import math
 
 
-CONSTS = {
-    'pi': math.pi,
-    'e': math.e,
+__all__ = ("default_consts",)
+
+
+default_consts = {
+    "pi": math.pi,
+    "e": math.e,
 }

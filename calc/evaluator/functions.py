@@ -1,49 +1,46 @@
 """
-This module contains functions
+Module: calc.evaluator.functions
+Description: Provides the functions callables.
 """
 
 import math
 
 
-FUNCS = {
+__all__ = ("default_funcs",)
+
+
+default_funcs = {
     # trignometric func
-    'sin': math.sin,
-    'cos': math.cos,
-    'tan': math.tan,
-
+    "sin": math.sin,
+    "cos": math.cos,
+    "tan": math.tan,
     # inverse trignometric func
-    'asin': math.asin,
-    'acos': math.acos,
-    'atan': math.atan,
-
+    "asin": math.asin,
+    "acos": math.acos,
+    "atan": math.atan,
     # hyperbolic func
-    'sinh': math.sinh,
-    'cosh': math.cosh,
-    'tanh': math.tanh,
-
+    "sinh": math.sinh,
+    "cosh": math.cosh,
+    "tanh": math.tanh,
     # inverse hyperbolic func
-    'asinh': math.asinh,
-    'acosh': math.acosh,
-    'atanh': math.atanh,
-
+    "asinh": math.asinh,
+    "acosh": math.acosh,
+    "atanh": math.atanh,
     # logrithmic
-    'log10': math.log10,
-    'log2': math.log2,
-    'log': math.log,
-
+    "log10": math.log10,
+    "log2": math.log2,
+    "log": math.log,
     # common roots
-    'sqrt': math.sqrt,
-    'cbrt': math.cbrt,
-
+    "sqrt": math.sqrt,
+    "cbrt": math.cbrt,
     # common functions
-    'floor': math.floor,
-    'ceil': math.ceil,
-    'round': round,
-    'max': max,
-    'min': min,
-    'abs': abs,
-    'avg': lambda *nums: sum(nums)/len(nums),
-
+    "floor": math.floor,
+    "ceil": math.ceil,
+    "round": round,
+    "max": max,
+    "min": min,
+    "abs": abs,
+    "avg": lambda *nums: sum(nums) / len(nums),
     # special functions
-    'fact': math.factorial,
+    "fact": math.factorial,
 }

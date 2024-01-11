@@ -1,9 +1,21 @@
 """
-This module contains exception classes raised during evaluation.
+Module: calc.evaluator.exceptions
+Description: Provides exception classes raised during evaluation.
 """
 
 from ..exceptions import CalcError
 from ..types import _Node
+
+
+__all__ = (
+    "EvaluationError",
+    "DivideByZeroError",
+    "UnknownFuncNameError",
+    "UnknownConstNameError",
+    "WrongArgCountError",
+    "MathDomainError",
+    "MethodNotFoundError",
+)
 
 
 class EvaluationError(CalcError):
@@ -11,9 +23,15 @@ class EvaluationError(CalcError):
 
 
 class DivideByZeroError(EvaluationError):
-    """raised when results in zero division error"""
+    """Raised when results in zero division error."""
 
     def __init__(self, expr: str, pos: int, *msg: object):
+        """
+        Arguments:
+        - expr: expression.
+        - pos: position of the division operator in expression.
+        - msg: messages or data objects.
+        """
         super().__init__(expr, *msg)
         self.pos = pos
 
@@ -27,15 +45,22 @@ class DivideByZeroError(EvaluationError):
 
 
 class UnknownFuncNameError(EvaluationError):
-    """raised when function is not found"""
+    """Raised when function used in expression is not found."""
 
     def __init__(self, expr: str, fn: str, pos: int, *msg: object):
+        """
+        Arguments:
+        - expr: expression.
+        - fn: name of the function used in expression.
+        - pos: position of function in expression.
+        - msg: messages or data objects.
+        """
         super().__init__(expr, *msg)
         self.fn = fn
         self.pos = pos
 
     def __str__(self) -> str:
-        marker = '^' * len(self.fn)
+        marker = "^" * len(self.fn)
         shift = self.pos + len(self.fn) + 13
         return (
             f"{self.name}: {self.description} \n"
@@ -44,16 +69,24 @@ class UnknownFuncNameError(EvaluationError):
             f"function '{self.fn}' is not defined"
         )
 
+
 class UnknownConstNameError(EvaluationError):
-    """raised when constant is not found"""
+    """Raised when constant used in expression is not found."""
 
     def __init__(self, expr: str, const: str, pos: int, *msg: object):
+        """
+        Arguments:
+        - expr: expression.
+        - const: name of the constant used in expression.
+        - pos: position of constant in expression.
+        - msg: messages or data objects.
+        """
         super().__init__(expr, *msg)
         self.const = const
         self.pos = pos
 
     def __str__(self) -> str:
-        marker = '^' * len(self.const)
+        marker = "^" * len(self.const)
         shift = self.pos + len(self.const) + 13
         return (
             f"{self.name}: {self.description} \n"
@@ -64,15 +97,22 @@ class UnknownConstNameError(EvaluationError):
 
 
 class WrongArgCountError(EvaluationError):
-    """raised when functions gets wrong number of arguments"""
+    """Raised when function receives wrong number of arguments."""
 
     def __init__(self, expr: str, fn: str, pos: int, *msg: object):
+        """
+        Arguments:
+        - expr: expression.
+        - fn: name of the function.
+        - pos: position of function in expression.
+        - msg: messages or data objects.
+        """
         super().__init__(expr, *msg)
         self.fn = fn
         self.pos = pos
 
     def __str__(self) -> str:
-        marker = '^' * len(self.fn)
+        marker = "^" * len(self.fn)
         shift = self.pos + len(self.fn) + 13
         return (
             f"{self.name}: {self.description} \n"
@@ -83,15 +123,22 @@ class WrongArgCountError(EvaluationError):
 
 
 class MathDomainError(EvaluationError):
-    """raised when the value provided is not in domain"""
+    """Raised when the value provided is not in domain of the function."""
 
     def __init__(self, expr: str, fn: str, pos: int, *msg: object):
+        """
+        Arguments:
+        - expr: expression.
+        - fn: name of the function.
+        - pos: position of function in expression.
+        - msg: messages or data objects.
+        """
         super().__init__(expr, *msg)
         self.fn = fn
         self.pos = pos
 
     def __str__(self) -> str:
-        marker = '^' * len(self.fn)
+        marker = "^" * len(self.fn)
         shift = self.pos + len(self.fn) + 13
         return (
             f"{self.name}: {self.description} \n"
@@ -101,11 +148,17 @@ class MathDomainError(EvaluationError):
         )
 
 
-
 class MethodNotFoundError(EvaluationError):
-    """raise when certain eval method isnot found"""
+    """Raised when certain eval method is not found to evaluate the node."""
 
     def __init__(self, expr: str, method: str, node: _Node, *msg: object):
+        """
+        Arguments:
+        - expr: expression.
+        - method: expected method name.
+        - node: node which was expected to evaluated by the method.
+        - msg: messages or data objects.
+        """
         super().__init__(expr, *msg)
         self.method = method
         self.node = node
