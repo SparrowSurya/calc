@@ -1,5 +1,15 @@
 """
-This package contains Parser class for parsing stream of tokens to ast.
+Module: calc.parser
+Description: Provides the classes and functions to parse the tokens.
+
+Usage:
+>>> from calc.parser import Parser, parse
+>>> from calc.lexer import lex
+>>> p = Parser('2+3', lex)
+>>> p.parse()
+BinOp(Num(2)+Num(3))
+>>> parse('2+3')
+BinOp(Num(2)+Num(3))
 """
 
 
@@ -10,31 +20,49 @@ from ..lexer.token import TokenType, Token
 from ..types import _Lexer
 
 
+__all__ = (
+    "Parser",
+    "parse",
+)
+
 
 class Parser:
-    """Parser object to convert stream of tokens to ast"""
+    """A Parser class to convert the stream of tokens into abstract syntax tree."""
 
     def __init__(self, expr: str, lexer: _Lexer):
+        """
+        Arguments:
+        - expr: expression.
+        - lexer: lexer object to tokenise the expression into stream of tokens.
+        """
         self.expr = expr
         self.lexer = iter(lexer(self.expr))
         self.token: Token | None = None
         self.advance()
 
     def advance(self):
-        """move to next token"""
+        """Moves to next token in the expression.
+
+        NOTE: sets token to None when tokens finished."""
         try:
             self.token = next(self.lexer)
         except StopIteration:
             self.token = None
 
     def parse(self) -> Num | UnOp | Func | BinOp | Const:
-        """main parse function"""
+        """Main method to parse the expression.
+
+        Returns:
+        - A tree like node object.
+
+        NOTE: In case of empty expression producing no tokens returns a single node with '0' value
+        """
         if self.token:
             return self.parse_expr()
-        return Num(0, '0')
+        return Num(0, "0")
 
     def parse_expr(self) -> BinOp | UnOp | Num | Func | Const:
-        """parses an expression"""
+        """Parses the expression."""
         node = self.parse_term()
 
         while self.token and self.token.type in (TokenType.PLUS, TokenType.MINUS):
@@ -47,12 +75,12 @@ class Parser:
             else:
                 raise self.syntax_error()
 
-            node = BinOp(index, left=node, op=op, right= self.parse_term())
+            node = BinOp(index, left=node, op=op, right=self.parse_term())
 
         return node
 
     def parse_exprs(self) -> tuple[BinOp | UnOp | Num | Func | Const]:
-        """parses expressions seperated by comma delimiter"""
+        """Parses expressions seperated by comma delimiter."""
         nodes = [self.parse_expr()]
 
         while self.token and self.token.type == TokenType.COMMA:
@@ -62,7 +90,7 @@ class Parser:
         return tuple(nodes)
 
     def parse_term(self) -> Num | UnOp | Func | BinOp | Const:
-        """parses terms"""
+        """Parses terms in the expression."""
         node = self.parse_factor()
 
         types = (TokenType.MUL, TokenType.DIV, TokenType.MOD, TokenType.POW)
@@ -85,7 +113,7 @@ class Parser:
         return node
 
     def parse_factor(self) -> Num | UnOp | Func | Const:
-        """"parses factors"""
+        """Parses factors in the term."""
         if self.token is None:
             raise self.syntax_error("unexpected end of expression")
 
@@ -123,7 +151,7 @@ class Parser:
         raise self.unknown_token_error()
 
     def syntax_error(self, *msg: object) -> SyntaxError:
-        """returns syntax error object"""
+        """produces exception object for syntax error."""
         return SyntaxError(
             self.expr,
             self.token,
@@ -131,14 +159,18 @@ class Parser:
         )
 
     def unknown_token_error(self) -> UnknownTokenError:
-        """returns unknown token error object"""
+        """Producees excpetion object for unknown token."""
         return UnknownTokenError(
             self.expr,
             self.token,
-            f"unknown token {self.token!r} encountered during parsing"
+            f"unknown token {self.token!r} encountered during parsing",
         )
 
 
 def parse(expr: str, lexer: _Lexer = lex) -> Num | UnOp | Func | BinOp | Const:
-    """returns ast of expr"""
+    """Produces the abstract syntax tree of expression.
+
+    Arguments:
+    - expr: expression.
+    - lexer: a lexer object providing stream of tokens."""
     return Parser(expr, lexer).parse()
