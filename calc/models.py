@@ -1,5 +1,6 @@
 """
-This module contains model objects.
+Module: calc.models
+Description: Provides the model class to handle expression and operations.
 """
 
 from calc.common import KeyKind, KeyData, Response, Result
@@ -7,14 +8,21 @@ from .evaluator import evaluate
 
 
 class ExprModel:
-    """Manages the expression and the associated operations"""
+    """A model class to provide operations for the expression."""
 
-    def __init__(self, initial_expr: str = ''):
-        self._expr = initial_expr
+    def __init__(self):
+        self._expr = ""
         self._eval = evaluate
 
     def eval(self, expr: str) -> int | float | Exception:
-        """Evaluates the expression and returns the result."""
+        """Evaluates the expression and returns the result.
+
+        Argument:
+        - expr: input expression.
+
+        Returns:
+        - evaluated result or error.
+        """
         try:
             result = self._eval(expr)
         except Exception as error:
@@ -23,17 +31,22 @@ class ExprModel:
 
     @property
     def expr(self) -> str:
-        """get expr"""
+        """Gets expression."""
         return self._expr
 
     @expr.setter
     def expr(self, expr: str):
-        """set expr"""
+        """Sets expression."""
         self._expr = expr
 
-    def eval_key(self, keydata: KeyData):
-        """
-        Evaluates keydata and appropriate response is provided.
+    def evaluate(self, keydata: KeyData) -> Result:
+        """Evaluates keydata and appropriate response is provided.
+
+        Arguments:
+        - keydata: data provided from view.
+
+        Returns:
+        - result of the data.
         """
         response = Response.EXPR
         data = None
@@ -43,7 +56,7 @@ class ExprModel:
                 self._expr = self._expr[:-1]
 
             case KeyKind.CLEAR:
-                self._expr = ''
+                self._expr = ""
 
             case KeyKind.EQUAL:
                 data = self.eval(self._expr)

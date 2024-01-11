@@ -1,6 +1,6 @@
 """
-This module contains common interface for key data
-exchange between view and model.
+Module: calc.common
+Description: Provide the common objects between view and model.
 """
 
 from dataclasses import dataclass
@@ -8,9 +8,7 @@ from enum import Enum, auto
 
 
 class KeyKind(Enum):
-    """
-    Describes the kind of operation to be performed
-    """
+    """Describes the kind of operation to be performed."""
 
     EQUAL = auto()
     BACKSPACE = auto()
@@ -20,18 +18,14 @@ class KeyKind(Enum):
 
 @dataclass
 class KeyData:
-    """
-    Dataclass to store the action with associated data
-    """
+    """Dataclass to store the action with associated data."""
 
     kind: KeyKind
     char: str = ""
 
 
 class Response(Enum):
-    """
-    Describes the kind of response from model.
-    """
+    """Describes the kind of response from model."""
 
     EVAL = auto()
     ERROR = auto()
@@ -40,9 +34,7 @@ class Response(Enum):
 
 @dataclass
 class Result:
-    """
-    Dataclass to store the response from model
-    """
+    """Dataclass to store the response from model."""
 
     response: Response
     expr: str

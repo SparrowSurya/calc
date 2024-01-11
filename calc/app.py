@@ -1,5 +1,6 @@
 """
-This module contains gui app,
+Module: calc.app
+Description: Provide the main application interface.
 """
 
 from .gui import Window
@@ -8,9 +9,17 @@ from .common import KeyData, Response, Result
 
 
 class Application:
-    """Main GUI program"""
+    """Main application engine.
+
+    Controller part of the application.
+    """
 
     def __init__(self, view: Window, model: ExprModel):
+        """
+        Arguments:
+        - view: interface for the application.
+        - model: expression model providing actions for various functionalities.
+        """
         self.view = view
         self.model = model
         self.view.on_input = self.update
@@ -18,22 +27,22 @@ class Application:
 
     @property
     def expr(self) -> str:
-        """gets expression from model"""
+        """Gets the expression from model."""
         return self.model.get_expr()
 
     @expr.setter
     def expr(self, expr: str):
-        """sets the expr"""
+        """Sets the expr on model as well as view."""
         self.model.expr = expr
         self.view.update_expr(Result(Response.EXPR, expr=expr))
 
     def mainloop(self):
-        """Run the application forever"""
+        """Run the application."""
         self.view.mainloop()
 
     def update(self, data: KeyData):
-        """updates the expression after each input"""
-        response = self.model.eval_key(data)
+        """Updates the expression after each input."""
+        response = self.model.evaluate(data)
         self.view.update_expr(response)
 
 
