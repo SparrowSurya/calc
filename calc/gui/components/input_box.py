@@ -1,5 +1,6 @@
 """
-This module contains input widget.
+Module: calc.gui.components.input_box
+Description: Provides the input box widget.
 """
 
 from typing import Callable
@@ -9,6 +10,7 @@ import tkinter as tk
 
 class InputBox(tk.Entry):
     """Calculator InputBox widget."""
+
     style = {
         "disabledbackground": "#232323",
         "disabledforeground": "#ff646c",
@@ -19,6 +21,11 @@ class InputBox(tk.Entry):
     }
 
     def __init__(self, parent: tk.Misc, on_input: Callable[[str], None]):
+        """
+        Argument:
+        - parent: parent widget.
+        - on_input: callback function when provided keyboard input.
+        """
         self._var = tk.StringVar()
         super().__init__(
             parent,
@@ -28,7 +35,7 @@ class InputBox(tk.Entry):
             **self.style
         )
         self.on_input = on_input
-        self.bind('<Key>', self.call)
+        self.bind("<Key>", self.call)
 
     def get(self) -> str:
         """Returns the text from buffer"""
@@ -39,6 +46,6 @@ class InputBox(tk.Entry):
         self._var.set(text)
 
     def call(self, e: tk.Event):
-        """Informs main running gui program for keyboard input"""
+        """Internal callback function to invoke callback."""
         if callable(self.on_input):
             self.on_input(e.char)

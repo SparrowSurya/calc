@@ -1,5 +1,6 @@
 """
-This package contains the GUI object.
+Module: calc.gui
+Description: Provides the GUI object.
 """
 
 from typing import Callable
@@ -56,7 +57,7 @@ class Window(tk.Tk):
             self.on_input(data)
 
     def resolve_keydata(self, key: str) -> KeyData:
-        """Returns keydata from key input"""
+        """Returns keydata from key input."""
         if key in BACKSPACE:
             return KeyData(KeyKind.BACKSPACE)
         if key in EQUAL:
@@ -68,7 +69,7 @@ class Window(tk.Tk):
         return KeyData(KeyKind.INSERT, key)
 
     def update_expr(self, result: Result):
-        """Sets the expression on display"""
+        """Sets the expression on display."""
         match result.response:
             case Response.ERROR:
                 self.show_error(result.data)
@@ -81,7 +82,7 @@ class Window(tk.Tk):
                 self.input_box.set(str(result.expr))
 
     def show_error(self, error: Exception):
-        """Display the error"""
+        """Displays the error."""
         messagebox.showerror(type(error).__name__, message=str(error))
 
 

@@ -1,5 +1,6 @@
 """
-This module contains the ui configuration.
+Module: calc.gui.config
+Description: Provides the configuration for ui.
 """
 
 # 6x4 keypad
