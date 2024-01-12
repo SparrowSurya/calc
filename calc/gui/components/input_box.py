@@ -4,48 +4,58 @@ Description: Provides the input box widget.
 """
 
 from typing import Callable
-
 import tkinter as tk
+
+from ..utils import get_key
 
 
 class InputBox(tk.Entry):
     """Calculator InputBox widget."""
 
     style = {
-        "disabledbackground": "#232323",
-        "disabledforeground": "#ff646c",
+        "background": "#232323",
+        "foreground": "#ff646c",
+        "selectforeground": "#232323",
+        "selectbackground": "#ff646c",
         "relief": "flat",
         "font": ("Roboto", 20, "bold"),
-        "cursor": "",
-        "width": 1,
+        "insertbackground": "#fffada",
+        "insertwidth": 2,
     }
 
-    def __init__(self, parent: tk.Misc, on_input: Callable[[str], None]):
+    def __init__(self, parent: tk.Misc, on_return: Callable[[str], None]):
         """
         Argument:
         - parent: parent widget.
         - on_input: callback function when provided keyboard input.
         """
-        self._var = tk.StringVar()
-        super().__init__(
-            parent,
-            textvariable=self._var,
-            state="disabled",
-            justify=tk.RIGHT,
-            **self.style
-        )
-        self.on_input = on_input
-        self.bind("<Key>", self.call)
+        self.on_return = on_return
+        super().__init__(parent, justify=tk.RIGHT, **self.style)
+        self.bind("<Return>", self.callback)
+        self.bind("<Key-Delete>", lambda _: self.clear())
 
-    def get(self) -> str:
+    def callback(self, e: tk.Event):
+        """Invoke callback when enter key is pressed."""
+        if callable(self.on_return):
+            self.on_return(e.char)
+
+    def get_text(self) -> str:
         """Returns the text from buffer"""
-        return self._var.get()
+        return self.get()
 
-    def set(self, text: str):
+    def set_text(self, text: str):
         """Sets the buffer text"""
-        self._var.set(text)
+        self.clear()
+        self.insert("0", text)
 
-    def call(self, e: tk.Event):
-        """Internal callback function to invoke callback."""
-        if callable(self.on_input):
-            self.on_input(e.char)
+    def push(self, text: str):
+        """Inserts the text at place of cursor."""
+        self.insert("end", text)
+
+    def clear(self):
+        """Clears the text."""
+        self.delete("0", "end")
+
+    def backspace(self):
+        """Removes a character from end."""
+        self.delete(self.index("end") - 1)

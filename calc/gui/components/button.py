@@ -30,14 +30,14 @@ class Button(tk.Button):
         - callback: callback when button is clicked.
         """
         self._key = key
-        self._callback = callback
+        self.on_click = callback
 
         super().__init__(
             parent,
             text=self._key,
             image=self.img,
             compound=tk.CENTER,
-            command=self.click,
+            command=self.callback,
             **self.style,
         )
 
@@ -46,7 +46,7 @@ class Button(tk.Button):
         """NOTE: Required to display button in rectangular shape."""
         return tk.PhotoImage()
 
-    def click(self):
+    def callback(self):
         """Internal callback function to invoke callback."""
-        if callable(self._callback):
-            self._callback(self._key)
+        if callable(self.on_click):
+            self.on_click(self._key)

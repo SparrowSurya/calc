@@ -5,7 +5,6 @@ Description: Provide the main application interface.
 
 from .gui import Window
 from .models import ExprModel
-from .common import KeyData, Response, Result
 
 
 class Application:
@@ -22,28 +21,34 @@ class Application:
         """
         self.view = view
         self.model = model
-        self.view.on_input = self.update
+        self.view.evaluate = self.evaluate
         self.view.setup()
 
     @property
     def expr(self) -> str:
-        """Gets the expression from model."""
-        return self.model.get_expr()
+        """Gets the expression from view."""
+        return self.view.get_expr()
 
     @expr.setter
     def expr(self, expr: str):
-        """Sets the expr on model as well as view."""
-        self.model.expr = expr
-        self.view.update_expr(Result(Response.EXPR, expr=expr))
+        """Sets the expr on view."""
+        self.view.set_expr(expr)
 
     def mainloop(self):
         """Run the application."""
         self.view.mainloop()
 
-    def update(self, data: KeyData):
-        """Updates the expression after each input."""
-        response = self.model.evaluate(data)
-        self.view.update_expr(response)
+    def evaluate(self, expr: str):
+        """Updates the expression after each input.
+
+        Arguments:
+        - expr: input expression.
+        """
+        result, success = self.model.evaluate(expr)
+        if success:
+            self.view.set_expr(str(result))
+        else:
+            self.view.show_error(result)
 
 
 if __name__ == "__main__":

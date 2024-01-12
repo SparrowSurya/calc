@@ -31,6 +31,7 @@ class Evaluator:
         - funcs: functions.
         - consts: constants.
         """
+        print(expr, lexer)
         self.expr = expr
         self.lexer = lexer
         self.parser = parser
@@ -136,21 +137,11 @@ class Evaluator:
             )
 
 
-def evaluate(
-    expr: str,
-    lexer: _Lexer = lex,
-    parser: _Parser = parse,
-    funcs: _Func = default_funcs,
-    consts: _Const = default_consts,
-) -> _Num:
+def evaluate(expr: str) -> _Num:
     """
     Evaluates the expreesion into and outputs the result.
 
     Arguments:
     - expr: expression.
-    - lexer: function to tokenise the expression.
-    - parser: parses the stream of token into parse tree.
-    - funcs: functions.
-    - consts: constants.
     """
-    return Evaluator(expr, lexer, parser, funcs, consts).eval()
+    return Evaluator(expr).eval()
