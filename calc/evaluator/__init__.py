@@ -3,13 +3,14 @@ Module: calc.evaluator
 Description: Providesthe classand functions to evaluate the parse tree.
 """
 
+from typing import Callable, Dict
+
 from .functions import default_funcs
 from .constants import default_consts
 from .exceptions import *
-from ..lexer import lex
-from ..parser import parse
+from ..lexer import Lexer, lex
+from ..parser import Parser, parse
 from ..parser.node import Node, BinOp, UnOp, Num, Func, Const
-from ..types import _Lexer, _Parser, _Func, _Const, _Num
 
 
 class Evaluator:
@@ -18,10 +19,10 @@ class Evaluator:
     def __init__(
         self,
         expr: str,
-        lexer: _Lexer = lex,
-        parser: _Parser = parse,
-        funcs: _Func = default_funcs,
-        consts: _Const = default_consts,
+        lexer: Lexer = lex,
+        parser: Parser = parse,
+        funcs: Dict[str, Callable] = default_funcs,
+        consts: Dict[str, int | float] = default_consts,
     ):
         """
         Arguments:
@@ -31,19 +32,18 @@ class Evaluator:
         - funcs: functions.
         - consts: constants.
         """
-        print(expr, lexer)
         self.expr = expr
         self.lexer = lexer
         self.parser = parser
         self.funcs = funcs
         self.consts = consts
 
-    def eval(self) -> _Num:
+    def eval(self) -> int | float:
         """Main method to evaluate the expreesion."""
         root = self.parser(self.expr, self.lexer)
         return self._eval_node(root)
 
-    def _eval_node(self, root: Node) -> _Num:
+    def _eval_node(self, root: Node) -> int | float:
         """Evaluates arbitrary node. Finds the appropriate method for the node."""
         try:
             name = f"_eval_{type(root).__name__.lower()}"
@@ -54,7 +54,7 @@ class Evaluator:
             )
         return method(root)
 
-    def _eval_binop(self, root: BinOp) -> _Num:
+    def _eval_binop(self, root: BinOp) -> int | float:
         """Evaluates the BinOp node."""
         left = self._eval_node(root.left)
         right = self._eval_node(root.right)
@@ -83,7 +83,7 @@ class Evaluator:
         if root.op == "**":
             return left**right
 
-    def _eval_unop(self, root: UnOp) -> _Num:
+    def _eval_unop(self, root: UnOp) -> int | float:
         """Evaluates UnOp node."""
         expr = self._eval_node(root.expr)
 
@@ -92,7 +92,7 @@ class Evaluator:
         if root.op == "-":
             return -expr
 
-    def _eval_num(self, root: Num) -> _Num:
+    def _eval_num(self, root: Num) -> int | float:
         """Evaluates Num node."""
         try:
             return int(root.value)
@@ -106,7 +106,7 @@ class Evaluator:
         base = float(base) if "." in base else int(base)
         return base * (10 ** int(expo))
 
-    def _eval_func(self, root: Func) -> _Num:
+    def _eval_func(self, root: Func) -> int | float:
         """Evaluates Func node."""
         try:
             name = root.name.lower()
@@ -126,7 +126,7 @@ class Evaluator:
                 self.expr, name, root.index, "wrong number of arguments provided"
             )
 
-    def _eval_const(self, root: Const) -> _Num:
+    def _eval_const(self, root: Const) -> int | float:
         """Evaluates Const node."""
         try:
             name = root.name.lower()
@@ -137,7 +137,7 @@ class Evaluator:
             )
 
 
-def evaluate(expr: str) -> _Num:
+def evaluate(expr: str) -> int | float:
     """
     Evaluates the expreesion into and outputs the result.
 

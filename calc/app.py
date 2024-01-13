@@ -5,6 +5,7 @@ Description: Provide the main application interface.
 
 from .gui import Window
 from .models import ExprModel
+from .exceptions import CalcError
 
 
 class Application:
@@ -44,7 +45,12 @@ class Application:
         Arguments:
         - expr: input expression.
         """
-        result, success = self.model.evaluate(expr)
+        try:
+            result, success = self.model.evaluate(expr)
+        except Exception as error:
+            success = False
+            result = CalcError(expr, "Internal Error", error)
+
         if success:
             self.view.set_expr(str(result))
         else:

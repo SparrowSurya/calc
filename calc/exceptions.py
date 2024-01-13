@@ -28,7 +28,7 @@ class CalcError(Exception):
 
     @staticmethod
     def get_marker(length: int, pad: int, mark: str = "^") -> str:
-        """Provides the underline highlighting."""
+        """Provides the underline marker highlighting."""
         return " " * pad + mark * length
 
     def __str__(self) -> str:

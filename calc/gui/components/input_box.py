@@ -18,7 +18,7 @@ class InputBox(tk.Entry):
         "selectforeground": "#232323",
         "selectbackground": "#ff646c",
         "relief": "flat",
-        "font": ("Roboto", 20, "bold"),
+        "font": ("Noto Sans", 20, "bold"),
         "insertbackground": "#fffada",
         "insertwidth": 2,
     }

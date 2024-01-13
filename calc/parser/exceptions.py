@@ -33,7 +33,7 @@ class UnknownTokenError(ParsingError):
         self.token = token
 
     def __str__(self) -> str:
-        marker = "^" * self.token.length
+        marker = "^" * len(self.token)
         return (
             f"{self.name}: {self.description} \n",
             f"{self.expr} \n",

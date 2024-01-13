@@ -17,7 +17,7 @@ class Button(tk.Button):
         "fg": "#c0c0c0",
         "bd": 0,
         "relief": "flat",
-        "font": ("Accuratist", 16, "normal"),
+        "font": ("Fira Mono", 16, "normal"),
         "height": 16,
         "width": 24,
     }

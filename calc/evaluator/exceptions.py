@@ -4,7 +4,7 @@ Description: Provides exception classes raised during evaluation.
 """
 
 from ..exceptions import CalcError
-from ..types import _Node
+from ..parser.node import Node
 
 
 __all__ = (
@@ -151,7 +151,7 @@ class MathDomainError(EvaluationError):
 class MethodNotFoundError(EvaluationError):
     """Raised when certain eval method is not found to evaluate the node."""
 
-    def __init__(self, expr: str, method: str, node: _Node, *msg: object):
+    def __init__(self, expr: str, method: str, node: Node, *msg: object):
         """
         Arguments:
         - expr: expression.

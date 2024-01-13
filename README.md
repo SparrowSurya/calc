@@ -25,9 +25,9 @@ External tools for maintenance are acceptable.
 * unary operators: `+ (positive)`, `- (negative)`
 * operator precedence (supports `BODMAS`)
 * brackets allowed `(` and `)`
-* supports (functions)[./calc/evaluator/functions.py] and (constants)[./calc/evaluator/constants.py].
+* supports [functions](./calc/evaluator/functions.py) and [constants](./calc/evaluator/constants.py).
 * functions can have fixed, optional or atleast one args
-* decent GUI interface
+* decent GUI & CLI application.
 
 
 ## Run the program
@@ -59,3 +59,34 @@ python main.py
     <br />
     <img src="./demo/demo2.png" />
 </div>
+
+
+## Grammar
+```
+EXPR := TERM
+    | (PLUS | MINUS) EXPR
+
+EXPRS := EXPR
+    | COMMA EXPRS
+
+TERM := FACTOR
+    | (MUL | DIV | MOD | POW) TERM
+
+FACTOR := NUM
+    | LAPREN EXPR RPAREN
+    | (PLUS | MINUS) FACTOR
+    | NAME LPAREN EXPRS RPAREN
+    | NAME
+
+PLUS := '+'
+MINUS := '-'
+MUL := '*'
+DIV := '/'
+MOD := '%'
+POW := '^'
+LPREN := '('
+RPAREN := ')'
+COMMA := ','
+NUM := '[0-9]+(\.[0-9]+)?([+-]?[eE][0-9]+)?'
+```
+

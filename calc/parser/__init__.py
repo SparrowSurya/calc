@@ -13,11 +13,10 @@ BinOp(Num(2)+Num(3))
 """
 
 
-from .node import BinOp, UnOp, Num, Func, Const
+from .node import Node, BinOp, UnOp, Num, Func, Const
 from .exceptions import UnknownTokenError, SyntaxError
-from ..lexer import lex
+from ..lexer import Lexer, lex
 from ..lexer.token import TokenType, Token
-from ..types import _Lexer
 
 
 __all__ = (
@@ -29,7 +28,7 @@ __all__ = (
 class Parser:
     """A Parser class to convert the stream of tokens into abstract syntax tree."""
 
-    def __init__(self, expr: str, lexer: _Lexer):
+    def __init__(self, expr: str, lexer: Lexer):
         """
         Arguments:
         - expr: expression.
@@ -49,7 +48,7 @@ class Parser:
         except StopIteration:
             self.token = None
 
-    def parse(self) -> Num | UnOp | Func | BinOp | Const:
+    def parse(self) -> Node:
         """Main method to parse the expression.
 
         Returns:
@@ -61,7 +60,7 @@ class Parser:
             return self.parse_expr()
         return Num(0, "0")
 
-    def parse_expr(self) -> BinOp | UnOp | Num | Func | Const:
+    def parse_expr(self) -> Node:
         """Parses the expression."""
         node = self.parse_term()
 
@@ -79,7 +78,7 @@ class Parser:
 
         return node
 
-    def parse_exprs(self) -> tuple[BinOp | UnOp | Num | Func | Const]:
+    def parse_exprs(self) -> tuple[Node, ...]:
         """Parses expressions seperated by comma delimiter."""
         nodes = [self.parse_expr()]
 
@@ -89,7 +88,7 @@ class Parser:
 
         return tuple(nodes)
 
-    def parse_term(self) -> Num | UnOp | Func | BinOp | Const:
+    def parse_term(self) -> Node:
         """Parses terms in the expression."""
         node = self.parse_factor()
 
@@ -112,7 +111,7 @@ class Parser:
 
         return node
 
-    def parse_factor(self) -> Num | UnOp | Func | Const:
+    def parse_factor(self) -> Node:
         """Parses factors in the term."""
         if self.token is None:
             raise self.syntax_error("unexpected end of expression")
@@ -167,7 +166,7 @@ class Parser:
         )
 
 
-def parse(expr: str, lexer: _Lexer = lex) -> Num | UnOp | Func | BinOp | Const:
+def parse(expr: str, lexer: Lexer = lex) -> Node:
     """Produces the abstract syntax tree of expression.
 
     Arguments:
