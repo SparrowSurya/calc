@@ -1,33 +1,47 @@
 """
 Module: calc.gui
-Description: Provides the GUI object.
+Description: Provides the default tkinter implementation GUI view for calculator.
 """
 
-from typing import Callable, Any, Iterable
+from typing import Any
 import tkinter as tk
 from tkinter import messagebox
 
 from .components.button import Button
 from .components.input_box import InputBox
-from .config import keypad
-from .utils import get_key
-from ..exceptions import CalcError
+from ..view import AbstractView, resolve_key
 
 
-class Window(tk.Tk):
-    """Graphical User Interface object"""
+keypad = (
+    ("CE", "(", ")", "⌫"),
+    ("%", "e", "π", "/"),
+    ("9", "8", "7", "*"),
+    ("6", "5", "4", "-"),
+    ("3", "2", "1", "+"),
+    (",", "0", ".", "="),
+)
+
+
+class TkView(tk.Tk, AbstractView):
+    """Tkinter view for the application."""
 
     keypad = keypad
 
-    def __init__(self):
-        super().__init__()
-        self.title("Calculator")
+    def __init__(self, title: str, control: Any | None = None):
+        """
+        Creates tkinter window.
+
+        Arguemnts:
+        - title: name of the window.
+        - control: main application.
+        """
+        tk.Tk.__init__(self)
+        AbstractView.__init__(self, control)
+
+        self.wm_title(title)
         self.resizable(False, False)
 
-        self.evaluate: Callable[[str], Any] = None
-
-    def setup(self):
-        """creates and puts widgets on window"""
+        # constructing interface
         self.config(bg="#232323")
 
         root = tk.Frame(self, bg="#232323", relief="flat")
@@ -36,8 +50,8 @@ class Window(tk.Tk):
         display = tk.Frame(root, bg="#232323", relief="flat")
         display.pack(expand=1, fill="x")
 
-        self.input_box = InputBox(display, self.callback)
-        self.input_box.pack(fill="x", padx=6, pady=12)
+        self.input_box = InputBox(display)
+        self.input_box.pack(fill="x", padx=6, pady=12, ipadx=0, ipady=0)
 
         buttons = tk.Frame(root, bg="#232323", relief="flat")
         buttons.pack(expand=1, fill="both")
@@ -49,44 +63,43 @@ class Window(tk.Tk):
                     row=i, column=j, padx=2, pady=2, ipadx=24, ipady=8, sticky="nsew"
                 )
 
-        self.input_box.focus()
+        self.bind("<Key-Return>", self.callback)
+        self.bind("<Key-Delete>", lambda _: self.callback("cls"))
 
-    def set_expr(self, expr: str):
-        """Sets the expression on display."""
-        self.input_box.set_text(expr)
-
-    def get_expr(self) -> str:
-        """Gets the expression from display."""
+    @property
+    def expression(self) -> str:
         return self.input_box.get_text()
 
+    def show_expression(self, expr: str):
+        return self.input_box.set_text(expr)
+
     def callback(self, event: tk.Event | str = ""):
-        """Handles the events in the application.
+        """Handles the key input events in the application.
 
         Arguments:
-        - event: can be tkinter event or a string.
+        - event: tkinter event with keypress info or key as string.
         """
-        key = get_key(event)
+        key = resolve_key(event.char if isinstance(event, tk.Event) else event)
         if key == "backspace":
             self.input_box.backspace()
         elif key == "clear":
             self.input_box.clear()
         elif key == "equal":
-            if callable(self.evaluate):
-                self.evaluate(self.get_expr())
+            if self.control:
+                self.control.evaluate_expression()
         elif key != "":
             self.input_box.push(key)
 
     def show_error(self, error: Exception):
-        """Displays the error message.
-
-        Arguments:
-        - error: should be the exception class or its child.
-        """
         title = type(error).__name__
         message = str(error)
-        messagebox.showerror(title, message)
+        return messagebox.showerror(title, message)
+
+    def mainloop(self):
+        self.input_box.focus()
+        return super().mainloop()
 
 
 if __name__ == "__main__":
-    app = Window()
-    app.setup()
+    view = TkView(title="Test Calculator View", control=None)
+    view.mainloop()

@@ -3,29 +3,37 @@ Module: calc.models
 Description: Provides the model class to handle expression operations.
 """
 
+import abc
+
 from .evaluator import evaluate
 
 
-class ExprModel:
-    """A model class to provide operations for the expression."""
+class AbstractModel(abc.ABC):
+    """Abstract Model for main application engine."""
 
+    @abc.abstractmethod
+    def evaluate(self, expression: str) -> tuple[int | float | Exception, bool]:
+        """Calcualte the value from expression.
+
+        Arguments:
+        - expression: input expression.
+
+        Returns:
+        - result of evaluation.
+        - success of evaluation.
+        """
+        raise NotImplementedError
+
+
+class CalcModel(AbstractModel):
     _eval = staticmethod(evaluate)
     """function to evaluate the expression."""
 
-    def evaluate(self, expr: str) -> tuple[int | float | Exception, bool]:
-        """Expression evaluation.
-
-        Arguments:
-        - expr: input expression.
-
-        Returns:
-        - result: evaluated value or Exception.
-        - success: False if result is error otherwise True.
-        """
+    def evaluate(self, expression: str) -> tuple[int | float | Exception, bool]:
         success = True
 
         try:
-            result = self._eval(expr)
+            result = self._eval(expression)
         except Exception as error:
             success = False
             result = error

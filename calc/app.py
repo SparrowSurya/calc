@@ -3,63 +3,39 @@ Module: calc.app
 Description: Provide the main application interface.
 """
 
-from .gui import Window
-from .models import ExprModel
-from .exceptions import CalcError
+from .view import AbstractView
+from .models import AbstractModel
 
 
-class Application:
-    """Main application engine.
+class Controller:
+    """Main Control application engine for the Calculator."""
 
-    Controller part of the application.
-    """
-
-    def __init__(self, view: Window, model: ExprModel):
+    def __init__(self, model: AbstractModel):
         """
+        Initialise the control engine with a model.
+
         Arguments:
-        - view: interface for the application.
-        - model: expression model providing actions for various functionalities.
+        - model: a model to provide the operation of various queries.
+
+        The view attribute is by default is `None`.
+        It is the respnsibility of the view to bind with it.
         """
-        self.view = view
         self.model = model
-        self.view.evaluate = self.evaluate
-        self.view.setup()
+        self.view: AbstractView | None = None
 
-    @property
-    def expr(self) -> str:
-        """Gets the expression from view."""
-        return self.view.get_expr()
-
-    @expr.setter
-    def expr(self, expr: str):
-        """Sets the expr on view."""
-        self.view.set_expr(expr)
-
-    def mainloop(self):
-        """Run the application."""
-        self.view.mainloop()
-
-    def evaluate(self, expr: str):
-        """Updates the expression after each input.
-
-        Arguments:
-        - expr: input expression.
-        """
-        try:
-            result, success = self.model.evaluate(expr)
-        except Exception as error:
-            success = False
-            result = CalcError(expr, "Internal Error", error)
+    def evaluate_expression(self) -> None:
+        """Evaluates the expression and provides it to the view."""
+        result, success = self.model.evaluate(self.view.expression)
 
         if success:
-            self.view.set_expr(str(result))
+            self.view.show_expression(str(result))
         else:
             self.view.show_error(result)
 
 
 if __name__ == "__main__":
-    from .gui import Window
-    from .models import ExprModel
+    from .gui import TkView
+    from .models import CalcModel
 
-    app = Application(view=Window(), model=ExprModel())
-    app.mainloop()
+    view = TkView("Calculator", Controller(CalcModel()))
+    view.mainloop()
